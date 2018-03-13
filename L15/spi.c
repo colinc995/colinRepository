@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <omp.h>
+
 
 int main(int argc, char **argv) {
 
   //seed random number generator
   // Q2b: get the number of threads to run with from agrv and 
   // add OpenMP API code to set number of threads here
-  int Nthreads = 1;
+  int Nthreads = argv(atoi);
   
   struct drand48_data *drandData; 
   drandData = (struct drand48_data*) malloc(Nthreads*sizeof(struct drand48_data));
