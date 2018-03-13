@@ -16,8 +16,14 @@ int main(int argc, char **argv) {
 
   // Q2c: add an OpenMP parallel region here, wherein each thread initializes 
   //      one entry in drandData using srand48_r and seed based on thread number
+
+
+#pragma omp parallel
+{
   long int seed = 0;
   srand48_r(seed, drandData+0);
+}
+
 
   long long int Ntrials = 10000000;
 
