@@ -95,7 +95,7 @@ int main (int argc, char **argv) {
     }
     printf("]\n");
 
-  }
+  
 
   /* Q2.3 Have only Bob populate messages and then
     send all the encrypted mesages to Alice (rank 0) */
@@ -106,7 +106,7 @@ int main (int argc, char **argv) {
 
   // the first send message is needed to send M
 
-  MPI_SEND(message,
+  MPI_Send(message,
  	Nmessages,
        	MPI_UNSIGNED,
         destination,
@@ -115,14 +115,14 @@ int main (int argc, char **argv) {
 
   // a second send message is needed to send A
   
-  MPI_SEND(a,
+  MPI_Send(a,
  	Nmessages,
        	MPI_UNSIGNED,
         destination,
         tag+1,               //tag is incremented
 	MPI_COMM_WORLD);
 
-
+  }
 
 
 

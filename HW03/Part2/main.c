@@ -70,8 +70,10 @@ int main (int argc, char **argv) {
 
 
 //Suppose we don't know the secret key. Use all the ranks to try and find it in parallel
-  if (rank==0)
+   
+  if (rank == 0)
   {
+
     printf("Using %d processes to find the secret key...\n", size);
 
   
@@ -79,27 +81,46 @@ int main (int argc, char **argv) {
      determine start and end values so this loop is 
      distributed amounst the MPI ranks  */
 
-    unsigned int chunk = N/size;
-    unsigned int remainder = N%size;
+    unsigned int totalLoopSize = p-1; //total loop size
+    unsigned int chunk = totalLoopSize / size;
+    unsigned int leftOvers = totalLoopSize % size;
 
-    unsigned int N = p-1; //total loop size
-    unsigned int start, end;
+
+    unsigned int start, end, thread;
   
     start = 0; 
     end = start + chunk;
     thread = 0;
 
 
-    while (end != N)
+    while (end != totalLoopSize)
     {
-      if (thread
+      if (thread<leftOvers)
+      {
+        end = end + 1;
+      }
+    }
+
+
+    if (thread == rank)
+    {
 
     //loop through the values from 'start' to 'end'
-    for (unsigned int i=start;i<end;i++) {
-      if (modExp(g,i+1,p)==h)
-        printf("Secret key found! x = %u \n", i+1);
+      for (unsigned int i=start;i<end;i++) 
+      {
+        if (modExp(g,i+1,p)==h)
+          printf("Secret key found! x = %u \n", i+1);
+      }
+
     }
+    
+    start = end + 1;         
+    end = start + chunk;
+    thread = thread + 1;
+
   }
+
+ 
 
   MPI_Finalize();
 
