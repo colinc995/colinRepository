@@ -55,7 +55,9 @@ int main (int argc, char **argv) {
   }
 
   /* Q1.3 Share the public key information */
-                         
+  
+  // here, I broadcast three of the variables given to us
+
   MPI_Bcast(&p,1,MPI_INT,0,MPI_COMM_WORLD);
   MPI_Bcast(&g,1,MPI_INT,0,MPI_COMM_WORLD);
   MPI_Bcast(&h,1,MPI_INT,0,MPI_COMM_WORLD);
@@ -66,20 +68,18 @@ int main (int argc, char **argv) {
 
 
 
-
-
-
 //Suppose we don't know the secret key. Use all the ranks to try and find it in parallel
    
   if (rank == 0)
-  {
-
     printf("Using %d processes to find the secret key...\n", size);
 
   
 /*Q3.2 We want to loop through values i=0 .. p-2
      determine start and end values so this loop is 
      distributed amounst the MPI ranks  */
+
+    // here, I create three separate variables: one stores the total size of the loop,    // one keeps track of the small portion added, and the last variable keeps track
+    // of the remainder
 
     unsigned int totalLoopSize = p-1; //total loop size
     unsigned int chunk = totalLoopSize / size;
@@ -92,7 +92,8 @@ int main (int argc, char **argv) {
     end = start + chunk;
     thread = 0;
 
-
+    // this checks that while we are not at the end, the end variable will continue to
+    // increment, as long as the thread does not surpass the remainder
     while (end != totalLoopSize)
     {
       if (thread<leftOvers)
@@ -101,7 +102,8 @@ int main (int argc, char **argv) {
       }
     }
 
-
+    // if the thread is equal to the rank, we will go through the entire loop and
+    // print the secret keys, then the variables will be updated/incremented
     if (thread == rank)
     {
 
@@ -117,8 +119,6 @@ int main (int argc, char **argv) {
     start = end + 1;         
     end = start + chunk;
     thread = thread + 1;
-
-  }
 
  
 

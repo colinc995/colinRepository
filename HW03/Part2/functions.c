@@ -127,16 +127,22 @@ unsigned int findGenerator(unsigned int p) {
 void setupElGamal(unsigned int n, unsigned int *p, unsigned int *g, 
                                   unsigned int *h, unsigned int *x) {
 
+
+
+  // here, I simply define each of the variables given. also, while the random
+  // number generated is not prime, I continue to create a new random variable
+  // until it is prime
+
 /* Q1.1 Setup an ElGamal cryptographic system */
   unsigned int randomP = randXbitInt(n);
-  while(isProbablyPrime(randomP) != 0)
+  while(isProbablyPrime(randomP) != 1)
   {
     randomP = randXbitInt(n);
   } 
  
   *h = modExp(*g,*x,*p);
   *g = findGenerator(*p);
-  *x = randXbitInt(*x) % *p;
+  *x = randXbitInt(n) % *p;
   
   printf("ElGamal Setup successful.\n");
   printf("p = %u. \n", *p);  
@@ -150,11 +156,17 @@ void ElGamalEncrypt(unsigned int *m, unsigned int *a,
                     unsigned int p, unsigned int g, unsigned int h)
 {
   /* Q2.1 Implement the encryption routine for an ElGamal cryptographic system */
+  
+  // here, since there was no y variable defined, i had to create a y variable that
+  // is random and prime
   unsigned int y = randXbitInt(32) % p;
   
+
   *a = modExp(g,y,p);
   unsigned int s = modExp(h,y,p);
 
+  //here, after following the encryption method from the first homework, I override
+  //the *m variable to be this product
   *m = modprod(*m, s, p);
   
 }
@@ -164,9 +176,13 @@ void ElGamalDecrypt(unsigned int *m, unsigned int a,
 {
   /* Q2.2 Implement the decryption routine for an ElGamal cryptographic system */
 
+    
   unsigned int s = modExp(a,x,p);
   unsigned int sinv = modExp(s,(p-2),p);
 
+
+  //here, after following the decryption method from the first homework, I override
+  //the *m variable to be this product
   *m  = modprod(*m,sinv,p);
 
 }
