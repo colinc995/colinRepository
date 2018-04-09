@@ -209,14 +209,19 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
   /* Q1.3 Complete this function   */
   unsigned int countInts = 0;
 
-  for (int i = 0; i < Nchars; i++)
+  for (int i = 0; i < Nints; i=i+ints/charas)
   {
     if ((Nchars / Nints) == 1)
     {
-      Z[i] = (int) string;
+      Z[i] = (unsigned int) string;
     }
 
     if ((Nchars / Nints) == 2)
+    {
+     ((unsigned int) (string[i]))/(2^8))  + (unsigned int) string[i+1];
+    }
+
+    if ((Nchars / Nints) == 3)
     {
       
     }
