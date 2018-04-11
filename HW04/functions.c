@@ -196,15 +196,14 @@ void padString(unsigned char* string, unsigned int charsPerInt)
 {
   /* Q1.2 Complete this function   */
 
-  unsigned int terminator;
-    
-  while (strlen(string) % charsPerInt != 0)
+  unsigned int terminator;   
+  while ((strlen(string) % charsPerInt) != 0)
   {
     terminator = strlen(string);
     string[terminator] = ' ';
   }
 
-  string[terminator + 1] = '\0'; 
+  string[strlen(string)] = '\0'; 
     
 }
 
@@ -224,14 +223,12 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
       unsigned int tempSlot = string[slot];
 
       tempSlot = string[slot] << (j*8);
-      Z[i] = Z[i] | (unsigned int)tempSlot;  //this iwll give you 'a' back
+      Z[i] = Z[i] | (unsigned int)tempSlot;  //this will give you 'a' back
 
       
-
       slot = slot + 1;
 
     }
-
 
   }
   

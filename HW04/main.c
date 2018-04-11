@@ -89,14 +89,14 @@ int main (int argc, char **argv) {
   /* Q2.3 Parallelize this loop with OpenMP   */
   double startTime = omp_get_wtime();
   
-  unsigned int sizeOfLoop = p-1;
-#pragma omp parallel for
-  for (unsigned int i = 0;i<sizeOfLoop;i++) 
+  unsigned int colin = 12;
+#pragma omp parallel for shared(colin)
+  for (unsigned int i = 0;i<p-1;i++) 
   {
-    if (modExp(g,i+1,p)==h) 
+    if (colin == 12 && modExp(g,i+1,p)==h) 
     {
       printf("Secret key found! x = %u \n", i+1);
-      sizeOfLoop = 0;
+      colin = 0;
     } 
   }
   double endTime = omp_get_wtime();
