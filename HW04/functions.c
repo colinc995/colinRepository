@@ -153,7 +153,8 @@ void ElGamalEncrypt(unsigned int *m, unsigned int *a, unsigned int Nints,
 
   /* Q2.1 Parallelize this function with OpenMP   */
 
-  for (unsigned int i=0; i<Nints;i++) {
+#pragma omp parallel for
+    for(unsigned int i=0; i<Nints;i++) {
     //pick y in Z_p randomly
     unsigned int y;
     do {
@@ -176,7 +177,8 @@ void ElGamalDecrypt(unsigned int *m, unsigned int *a, unsigned int Nints,
 
   /* Q2.1 Parallelize this function with OpenMP   */
 
-  for (unsigned int i=0; i<Nints;i++) {
+#pragma omp parallel for
+    for(unsigned int i=0; i<Nints;i++) {
     //compute s = a^x
     unsigned int s = modExp(a[i],x,p);
 
@@ -194,12 +196,16 @@ void padString(unsigned char* string, unsigned int charsPerInt)
 {
   /* Q1.2 Complete this function   */
 
+  unsigned int terminator;
+    
   while (strlen(string) % charsPerInt != 0)
   {
-    strcat(string, " ");
+    terminator = strlen(string);
+    string[terminator] = ' ';
   }
-    
 
+  string[terminator + 1] = '\0'; 
+    
 }
 
 
@@ -207,25 +213,26 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
                       unsigned int  *Z,      unsigned int Nints) 
 {
   /* Q1.3 Complete this function   */
-  unsigned int countInts = 0;
 
-  for (int i = 0; i < Nints; i=i+ints/charas)
+  unsigned int slot = 0; 
+  
+#pragma omp parallel for
+  for(unsigned int i = 0; i < Nchars; i = i + (Nchars/Nints))
   {
-    if ((Nchars / Nints) == 1)
+    for (unsigned int j = 0; j < Nchars/Nints; j++)
     {
-      Z[i] = (unsigned int) string;
-    }
+      unsigned int tempSlot = string[slot];
 
-    if ((Nchars / Nints) == 2)
-    {
-     ((unsigned int) (string[i]))/(2^8))  + (unsigned int) string[i+1];
-    }
+      tempSlot = string[slot] << (j*8);
+      Z[i] = Z[i] | (unsigned int)tempSlot;  //this iwll give you 'a' back
 
-    if ((Nchars / Nints) == 3)
-    {
       
+
+      slot = slot + 1;
+
     }
-    
+
+
   }
   
 
@@ -238,9 +245,34 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
 
 
 void convertZToString(unsigned int  *Z,      unsigned int Nints,
-                      unsigned char *string, unsigned int Nchars) {
-
+                      unsigned char *string, unsigned int Nchars) 
+{
   /* Q1.4 Complete this function   */
+  unsigned int slot = 0;
+
+#pragma omp parallel for
+  for(unsigned int i = 0; i < Nchars; i = i+(Nchars / Nints))
+  {    
+    for (unsigned int j = 0; j < (Nchars/Nints); j++)
+    {
+      unsigned int tag = 0xFF;
+      tag = tag << (j*8);
+      unsigned int tempLocation = Z[i] & tag;
+
+      tempLocation = tempLocation >> (j*8);
+      string[slot] = (unsigned char)tempLocation;   //this will cast it back into a character
+
+      slot = slot + 1;
+      
+    }
+
+
+  }
+  
+  
+  
+  
+  
   /* Q2.2 Parallelize this function with OpenMP   */
 
 }
