@@ -98,7 +98,7 @@ unsigned int isProbablyPrime(unsigned int N) {
       if (x == 1) return 0; //false
       if (x == N-1) break;
     }
-    // see whether we left the loop becasue x==N-1
+    // see whether we left the loop because x==N-1
     if (x == N-1) continue; 
 
     return 0; //false
@@ -219,10 +219,10 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
   {
     for (unsigned int j = 0; j < cpi; j++)
     {
-      unsigned int notYet = (unsigned int)string[i+j];
-      unsigned int readyToShift = notYet<<(j*8);
+      unsigned int notYet = (unsigned int)string[i+j];     //this is the int that is being prepared to shift
+      unsigned int readyToShift = notYet<<(j*8);           //this is the casted integer that ends up being shifted
 
-      Z[i/cpi] = Z[i/cpi]^readyToShift;
+      Z[i/cpi] = Z[i/cpi]^readyToShift;                    //this updates Z, based on the cpi number
     }
 
   }
@@ -260,11 +260,12 @@ void convertZToString(unsigned int  *Z,      unsigned int Nints,
   {    
     for (unsigned int j = 0; j < cpi; j++)
     {
-      unsigned int tag = 0xFF;
+      unsigned int tag = 0xFF;  //this has an integer value of 255; this is the equivalent of a 
+                                //32 bit character with 24 zeros and eight ones 
       tag = tag << (j*8);
 
-      unsigned int tempLocation = Z[i/cpi]&tag;
-      tempLocation = tempLocation >> (j*8);
+      unsigned int tempLocation = Z[i/cpi] & tag;  //this produces the bitwise and operation to recover the original character
+      tempLocation = tempLocation >> (j*8);  //this will shift (2^8) bits
 
       string[i+j] = (unsigned char)tempLocation;   //this will cast it back into a character
       
