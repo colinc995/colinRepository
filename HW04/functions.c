@@ -213,17 +213,17 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
 {
   /* Q1.3 Complete this function   */
 
-  unsigned int slot = 0; 
-#pragma omp parallel for
-  for(unsigned int i = 0; i < Nchars; i = i + (Nchars/Nints))
-  {
-    for (unsigned int j = 0; j < Nchars/Nints; j++)
-    {
-      unsigned int toShift = (unsigned int)string[slot];
-      unsigned int shift = toShift<<(j*8);
+  unsigned int cpi = Nchars/Nints;
 
-      Z[i/(Nchars/Nints)] = Z[i/(Nchars/Nints)]^shift;
-      slot++;
+#pragma omp parallel for
+  for(unsigned int i = 0; i < Nchars; i = i + cpi)
+  {
+    for (unsigned int j = 0; j < cpi; j++)
+    {
+      unsigned int notYet = (unsigned int)string[i+j];
+      unsigned int readyToShift = notYet<<(j*8);
+
+      Z[i/cpi] = Z[i/cpi]^readyToShift;
     }
 
   }
@@ -232,34 +232,8 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
 
 
 
-/*
-#pragma omp parallel for
 
-  for (unsigned int i = 0; i < Nchars; i += (Nchars/Nints))
-  {
-      
-    unsigned int counter = 0;
-    unsigned int cpi = Nchars/Nints;
-
-    if ((cpi) == 1)
-    {
-      Z[i/cpi] = (unsigned int) string[counter];
-    }
-
-    if ((cpi == 2 && (i%2) == 0))
-    {
-      Z[i/cpi] = (2^8)*(unsigned int)string[counter] + (unsigned int)string[counter+1];
-    }
-
-    if ((cpi) == 3 && (i%3) == 0)
-    {
-      Z[i/cpi] = (2^16)*(unsigned int)string[counter] + (2^8)*(unsigned int)string[counter+1] + (unsigned int)string[counter+2];
-    }
     
-    counter++;
-  }
-  */
-
 
 
 
@@ -280,20 +254,20 @@ void convertZToString(unsigned int  *Z,      unsigned int Nints,
                       unsigned char *string, unsigned int Nchars) 
 {
   /* Q1.4 Complete this function   */
-  unsigned int slot = 0;
-
+  unsigned int cpi = Nchars/Nints;
 
 #pragma omp parallel for
-  for(unsigned int i = 0; i < Nchars; i = i+(Nchars / Nints))
+  for(unsigned int i = 0; i < Nchars; i = i + cpi)
   {    
-    for (unsigned int j = 0; j < (Nchars/Nints); j++)
+    for (unsigned int j = 0; j < cpi; j++)
     {
       unsigned int tag = 0xFF;
       tag = tag << (j*8);
-      unsigned int tempLocation = Z[i/(Nchars/Nints)]&tag;
+
+      unsigned int tempLocation = Z[i/cpi]&tag;
       tempLocation = tempLocation >> (j*8);
-      string[slot] = (unsigned char)tempLocation;   //this will cast it back into a character
-      slot = slot + 1;
+
+      string[i+j] = (unsigned char)tempLocation;   //this will cast it back into a character
       
     }
 
@@ -301,34 +275,6 @@ void convertZToString(unsigned int  *Z,      unsigned int Nints,
   }
 
 
-/*
-  if (Nchars/Nints == 1)
-  {
-    for (unsigned int i = 0; i < Nints; i++)
-    {
-      string[i] = (unsigned char)Z[i];     //this will cast back into a character
-    }
-  }
-
-
-  if (Nchars/Nints == 2)
-  {
-    for (unsigned int i = 0; i < Nints; i++)
-    {
-      string[i*2] = (unsigned char)(Z[i] >> 8);
-      string[(i*2) + 1] = (unsigned char)((Z[i] << 8) >> 8);
-    }
-  }
-
-  if (Nchars/Nints == 3)
-  {
-    for (unsigned int i = 0; i < Nints; i++)
-    {
-      
-    }
-  }
-  
-*/  
   
   
   
