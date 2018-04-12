@@ -18,4 +18,4 @@ make
 ./main 4 
 ./main 8
 ./main 16
-./main 32
+./main 20
