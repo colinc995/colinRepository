@@ -203,8 +203,7 @@ void padString(unsigned char* string, unsigned int charsPerInt)
     string[terminator] = ' ';
   }
 
-  string[strlen(string)] = '\0'; 
-    
+  string[strlen(string)] = '\0';     
 }
 
 

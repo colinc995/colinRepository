@@ -9,7 +9,7 @@
 
 int main (int argc, char **argv) {
 
-  int Nthreads = 27;
+  int Nthreads = atoi(argv[argc-1]);
 
   omp_set_num_threads(Nthreads);
 
