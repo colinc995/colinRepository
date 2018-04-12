@@ -196,16 +196,14 @@ void padString(unsigned char* string, unsigned int charsPerInt)
 {
   /* Q1.2 Complete this function   */
 
-  unsigned int terminator;
-    
-  while (strlen(string) % charsPerInt != 0)
+  unsigned int terminator;   
+  while ((strlen(string) % charsPerInt) != 0)
   {
     terminator = strlen(string);
     string[terminator] = ' ';
   }
 
-  string[terminator + 1] = '\0'; 
-    
+  string[strlen(string)] = '\0';     
 }
 
 
@@ -214,26 +212,33 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
 {
   /* Q1.3 Complete this function   */
 
-  unsigned int slot = 0; 
-  
+  unsigned int cpi = Nchars/Nints;
+
 #pragma omp parallel for
-  for(unsigned int i = 0; i < Nchars; i = i + (Nchars/Nints))
+  for(unsigned int i = 0; i < Nchars; i = i + cpi)
   {
-    for (unsigned int j = 0; j < Nchars/Nints; j++)
+    for (unsigned int j = 0; j < cpi; j++)
     {
-      unsigned int tempSlot = string[slot];
+      unsigned int notYet = (unsigned int)string[i+j];
+      unsigned int readyToShift = notYet<<(j*8);
 
-      tempSlot = string[slot] << (j*8);
-      Z[i] = Z[i] | (unsigned int)tempSlot;  //this iwll give you 'a' back
-
-      
-
-      slot = slot + 1;
-
+      Z[i/cpi] = Z[i/cpi]^readyToShift;
     }
 
-
   }
+ 
+
+
+
+
+
+    
+
+
+
+
+
+
   
 
 
@@ -248,28 +253,27 @@ void convertZToString(unsigned int  *Z,      unsigned int Nints,
                       unsigned char *string, unsigned int Nchars) 
 {
   /* Q1.4 Complete this function   */
-  unsigned int slot = 0;
+  unsigned int cpi = Nchars/Nints;
 
 #pragma omp parallel for
-  for(unsigned int i = 0; i < Nchars; i = i+(Nchars / Nints))
+  for(unsigned int i = 0; i < Nchars; i = i + cpi)
   {    
-    for (unsigned int j = 0; j < (Nchars/Nints); j++)
+    for (unsigned int j = 0; j < cpi; j++)
     {
       unsigned int tag = 0xFF;
       tag = tag << (j*8);
-      unsigned int tempLocation = Z[i] & tag;
 
+      unsigned int tempLocation = Z[i/cpi]&tag;
       tempLocation = tempLocation >> (j*8);
-      string[slot] = (unsigned char)tempLocation;   //this will cast it back into a character
 
-      slot = slot + 1;
+      string[i+j] = (unsigned char)tempLocation;   //this will cast it back into a character
       
     }
 
 
   }
-  
-  
+
+
   
   
   
