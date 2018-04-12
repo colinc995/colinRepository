@@ -9,7 +9,7 @@
 
 int main (int argc, char **argv) {
 
-  int Nthreads = 2;
+  int Nthreads = 15;
 
   omp_set_num_threads(Nthreads);
 
@@ -25,9 +25,9 @@ int main (int argc, char **argv) {
   //begin with rank 0 getting user's input
 	unsigned int n;
 
-  printf("Enter a number of bits: "); fflush(stdout);
-  char status = scanf("%u",&n);
-
+  //printf("Enter a number of bits: "); fflush(stdout);
+  //char status = scanf("%u",&n);
+  n = 20;
   //make sure the input makes sense
   if ((n<9)||(n>31)) {//Updated bounds. 8 is no good (need to encode chars)
   	printf("Unsupported bit size.\n");
