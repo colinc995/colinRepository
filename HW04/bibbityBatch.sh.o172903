@@ -1,0 +1,11 @@
+cat bibbityBatch.sh >bibbityBatch 
+chmod a+x bibbityBatch
+gcc -I./. -O3 -g -fopenmp -o main.o -lm -c main.c
+gcc -I./. -O3 -g -fopenmp -o functions.o -lm -c functions.c
+gcc  ././main.o ././functions.o -I./. -O3 -g -fopenmp -o main -lm
+Enter a number of bits: Unsupported bit size.
+Enter a number of bits: Unsupported bit size.
+Enter a number of bits: Unsupported bit size.
+Enter a number of bits: Unsupported bit size.
+Enter a number of bits: Unsupported bit size.
+Enter a number of bits: Unsupported bit size.
