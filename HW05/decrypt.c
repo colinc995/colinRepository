@@ -75,6 +75,8 @@ int main (int argc, char **argv) {
   unsigned int Nchars = ((n-1)/8) * Nints;
 
   convertZToString(Zmessage, Nints, newArray, Nchars);
+
+  printf("Message = %s\n", newArray);
   
 
   return 0;

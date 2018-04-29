@@ -8,6 +8,74 @@
 #include "functions.c"
 
 
+
+
+
+
+__device__ unsigned int modProdCuda(unsigned int a, unsigned int b, unsigned p)
+{
+    unsigned int z_a = a;
+    unsigned int a_b = 0;
+
+    while (b>0)
+    {
+        if (b%2 == ) a_b = (a_b + z_a)%p;
+        z_a = (2*z_a) % p;
+        b/= 2;
+    }
+    return a_b;
+}
+
+
+
+
+__device__ unsigned int modExpCuda(unsigned int a, unsigned int b, unsigned p)
+{
+   unsigned int z = a;
+   unsigned int aExpb = 1;
+
+   while (b > 0) {
+     if (b%2 == 1) aExpb = modprodCuda(aExpb, z, p);
+     z = modProdCuda(z, z, p);
+     b /= 2;
+   }
+   return aExpb;
+}
+
+
+
+
+
+
+// find the key
+__global__ void secretKeyDecryptCuda(unsigned int g, unsigned int p, unsigned int h, unsigned int *d)
+{
+    int thread = threadIdx.x;
+    int block = blockIdx.x;
+    int blockSize = blockDim.x;
+    int gid = thread + block*blockSize;
+
+    if (gid < (p-1))
+    {
+        if (modExpCuda(g,gid,p) == h)
+        {
+            d = gid-1;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 int main (int argc, char **argv) 
 {
 
@@ -100,7 +168,7 @@ int main (int argc, char **argv)
   host_a = (unsigned int *) malloc(sizeof(unsigned int));
 
   double start = clock();
-  cudaDecrypt <<<Gr,Bl>>>(g,p,h,device_a);
+  secretKeyDecryptCuda <<<Gr,Bl>>>(g,p,h,device_a);
   cudaDeviceSynchronize();
 
   cudaMemcpy(host_A,device_a,sizeof(unsigned int) , cudaMemcpyDeviceToHost);
@@ -110,68 +178,6 @@ int main (int argc, char **argv)
   return 0;
 
 
-}
-
-
-
-
-
-
-
-
-
-
-__device__ unsigned int cudaModExp(unsigned int a, unsigned int b, unsigned p)
-{
-   unsigned int z = a;
-   unsigned int aExpb = 1;
-
-   while (b > 0) {
-     if (b%2 == 1) aExpb = cudaModprod(aExpb, z, p);
-     z = cudaModprod(z, z, p);
-     b /= 2;
-   }
-   return aExpb;
-}
-
-
-
-
-__device__ unsigned int cudaModProd(unsigned int a, unsigned int b, unsigned p)
-{
-    unsigned int z_a = a;
-    unsigned int a_b = 0;
-
-    while (b>0)
-    {
-        if (b%2 == ) a_b = (a_b + z_a)%p;
-        z_a = (2*z_a) % p;
-        b/= 2;
-    }
-    return a_b;
-}
-
-
-
-
-
-
-
-// find the key
-__global__ void cudaKeyDecrypt(unsigned int g, unsigned int p, unsigned int h, unsigned int *d)
-{
-    int thread = threadIdx.x;
-    int block = blockIdx.x;
-    int blockSize = blockDim.x;
-    int gid = thread + block*blockSize;
-
-    if (gid < (p-1))
-    {
-        if (cudaModExp(g,gid,p) == h)
-        {
-            d = gid-1;
-        }
-    }
 }
 
 
